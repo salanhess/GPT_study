@@ -1,0 +1,18 @@
+from flask import Flask, g, request
+
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    # 获取当前请求的用户代理信息并存储在g.user_agent中
+    g.user_agent = request.headers.get('User-Agent')
+    # 获取g.user_agent中存储的用户代理信息并返回
+    return 'Your user agent is %s' % g.user_agent
+
+if __name__ == '__main__':
+    with app.test_request_context('/', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'}):
+        # 在测试请求上下文中调用index视图函数
+        response = app.full_dispatch_request()
+        # 打印视图函数返回的结果
+        print(response.get_data(as_text=True))
+    app.run(debug=True, host='0.0.0.0', port=8080)
